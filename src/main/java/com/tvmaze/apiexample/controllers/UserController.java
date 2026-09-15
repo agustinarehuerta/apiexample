@@ -1,8 +1,9 @@
 package com.tvmaze.apiexample.controllers;
 
+import com.tvmaze.apiexample.service.DbService;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tvmaze.apiexample.model.TvMazeByIDResponse;
+import com.tvmaze.apiexample.entity.Show;
 import com.tvmaze.apiexample.model.TvMazeShow;
 import com.tvmaze.apiexample.service.UserService;
 
@@ -10,6 +11,8 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -18,11 +21,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/api")
 public class UserController {
 
+    private final DbService dbService;
     private final UserService userService;
 
     
-    public UserController(UserService userService) {
+    public UserController(UserService userService, DbService dbService) {
         this.userService = userService;
+        this.dbService = dbService;
     }
 
 
@@ -37,13 +42,18 @@ public class UserController {
     }
 
     @GetMapping("/getShowsById/{show_id}")
-    public List<TvMazeByIDResponse> getShowsById(@PathVariable Long show_id) {
+    public Show getShowsById(@PathVariable Long show_id) {
         if (show_id == null) {
              throw new IllegalArgumentException(
                 "Query parameter cannot be empty"
         );  
         }
         return userService.getShowById(show_id);
+    }
+
+    @PostMapping("/saveShow")
+    public Show createMovie(@RequestBody Show show) {
+        return dbService.createMovie(show);
     }
     
     
