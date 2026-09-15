@@ -1,15 +1,16 @@
 package com.tvmaze.apiexample.client;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
-import org.springframework.http.HttpStatusCode;
 
 import com.tvmaze.apiexample.entity.Show;
-import com.tvmaze.apiexample.exception.TvMazeException;
-import com.tvmaze.apiexample.model.TvMazeSearchResponse;
+import com.tvmaze.apiexample.model.TvMazeSearchItem;
+import com.tvmaze.apiexample.model.TvMazeShowRaw;
 
 @Component 
 public class TvMazeClient {
@@ -22,74 +23,38 @@ public class TvMazeClient {
                 .build();
     }
 
-    @SuppressWarnings("null")
-    public List<TvMazeSearchResponse> getShows(String query) {
+    public List<TvMazeSearchItem> getShows(String query) {
 
-    try {
+               TvMazeSearchItem[] result = restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/search/shows")
+                        .queryParam("q", query)
+                        .build())
+                .retrieve()
+                .body(TvMazeSearchItem[].class);
 
-            TvMazeSearchResponse[] response = restClient
-                    .get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/search/shows")
-                            .queryParam("q", query)
-                            .build())
+        return result != null ? Arrays.asList(result) : Collections.emptyList();
+    }
+
+    public TvMazeShowRaw getById(Long id) {
+        try {
+            return restClient.get()
+                    .uri("/shows/{id}", id)
                     .retrieve()
-                    .onStatus(
-                            HttpStatusCode::isError,
-                            (request, response1) -> {
-                                throw new TvMazeException(
-                                        "TVMaze API returned status: "
-                                                + response1.getStatusCode()
-                                );
-                            }
-                    )
-                    .body(TvMazeSearchResponse[].class);
-
-            return response != null
-                    ? Arrays.asList(response)
-                    : List.of();
-
-        } catch (TvMazeException e) {
-            throw e;
-
-        } catch (Exception e) {
-            throw new TvMazeException(
-                    "Error de comunicacion con TVMaze API",
-                    e
-            );
+                    .body(TvMazeShowRaw.class);
+        } catch (HttpClientErrorException.NotFound notFound) {
+            return null;
         }
     }
 
-    public Show getById(Long id) {
-
-    try {
-
-           Show response = restClient
-            .get()
-            .uri("/shows/{id}", id)
-            .retrieve()
-            .onStatus(
-                    status -> status.value() == 404,
-                    (request, responseone) -> {
-                        throw new TvMazeException(
-                                "Show with id " + id + " was not found"
-                        );
-                    }
-            )
-            .body(Show.class);
-
-
-            return response;
-
-        } catch (TvMazeException e) {
-            throw e;
-
-        } catch (Exception e) {
-            throw new TvMazeException(
-                    "Error de comunicacion con TVMaze API",
-                    e
-            );
+        public Show getById2(Long id) {
+        try {
+            return restClient.get()
+                    .uri("/shows/{id}", id)
+                    .retrieve()
+                    .body(Show.class);
+        } catch (HttpClientErrorException.NotFound notFound) {
+            return null;
         }
     }
-
 }

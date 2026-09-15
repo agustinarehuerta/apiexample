@@ -2,8 +2,9 @@ package com.tvmaze.apiexample.service;
 
 import org.springframework.stereotype.Service;
 
-import com.tvmaze.apiexample.entity.Comment;
+import com.tvmaze.apiexample.entity.CommentDocument;
 import com.tvmaze.apiexample.entity.Show;
+import com.tvmaze.apiexample.model.CommentRequestDto;
 import com.tvmaze.apiexample.repository.CommentRepository;
 import com.tvmaze.apiexample.repository.ShowRepository;
 
@@ -28,8 +29,18 @@ public class DbService {
         return showRepository.save(show);
     }
 
-    public Comment createComment(Comment comment){
-           return commentRepository.save(comment);
+    public void createComment(Long showId, CommentRequestDto request){
+                
+        CommentDocument document = CommentDocument.builder()
+        .showId(showId)
+        .comment(request.getComment())
+        .rating(request.getRating())
+        .build();
+        commentRepository.save(document);
+    }
+
+    public CommentDocument getComment(String id){
+        return commentRepository.findById(id).orElse(null);
     }
     
 }
