@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.http.HttpStatusCode;
 
+import com.tvmaze.apiexample.entity.Show;
 import com.tvmaze.apiexample.exception.TvMazeException;
-import com.tvmaze.apiexample.model.TvMazeByIDResponse;
 import com.tvmaze.apiexample.model.TvMazeSearchResponse;
 
 @Component 
@@ -60,11 +60,11 @@ public class TvMazeClient {
         }
     }
 
-    public List<TvMazeByIDResponse> getById(Long id) {
+    public Show getById(Long id) {
 
     try {
 
-           TvMazeByIDResponse response = restClient
+           Show response = restClient
             .get()
             .uri("/shows/{id}", id)
             .retrieve()
@@ -76,12 +76,10 @@ public class TvMazeClient {
                         );
                     }
             )
-            .body(TvMazeByIDResponse.class);
+            .body(Show.class);
 
 
-            return response != null
-                    ? Arrays.asList(response)
-                    : List.of();
+            return response;
 
         } catch (TvMazeException e) {
             throw e;

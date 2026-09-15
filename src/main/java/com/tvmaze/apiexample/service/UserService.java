@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.tvmaze.apiexample.client.TvMazeClient;
-import com.tvmaze.apiexample.model.TvMazeByIDResponse;
+import com.tvmaze.apiexample.entity.Show;
 import com.tvmaze.apiexample.model.TvMazeSearchResponse;
 import com.tvmaze.apiexample.model.TvMazeShow;
 
@@ -13,8 +13,10 @@ import com.tvmaze.apiexample.model.TvMazeShow;
 public class UserService {
 
     private final TvMazeClient tvMazeClient;
+    private final DbService dbService;
 
-     public UserService(TvMazeClient tvMazeClient) {
+     public UserService(DbService dbService,TvMazeClient tvMazeClient) {
+        this.dbService = dbService;
         this.tvMazeClient = tvMazeClient;
     }
 
@@ -26,9 +28,15 @@ public class UserService {
         .toList();
     }
 
-    public List<TvMazeByIDResponse> getShowById(Long show_id) {
+    public Show getShowById(Long show_id) {
 
-        return tvMazeClient.getById(show_id.longValue());
+        Show response = dbService.getShowById(show_id.toString());
+        if (response == null) {
+           response = tvMazeClient.getById(show_id.longValue());
+           dbService.createMovie(response);
+        }
+
+        return response;
     }
 
 }
