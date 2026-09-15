@@ -46,15 +46,20 @@ public final class ShowMapper {
                 .schedule(raw.getSchedule())
                 .rating(raw.getRating())
                 .network(raw.getNetwork())
-                .webChannel(raw.getWebchannel_name())
+                .webChannel(raw.getWebChannel())
+                .externals(raw.getExternals())
                 .image(raw.getImage())
+                .links(raw.getLinks())
                 .summary(raw.getSummary())
+                .updated(raw.getUpdated())
+                .weight(raw.getWeight())                
                 .build();
     }
 
         public static ShowDetailDto toDetailDto(TvMazeShowRaw raw, List<CommentDto> comments) {
         return ShowDetailDto.builder()
                 .id(raw.getId())
+                .url(raw.getUrl())
                 .name(raw.getName())
                 .type(raw.getType())
                 .language(raw.getLanguage())
@@ -68,9 +73,13 @@ public final class ShowMapper {
                 .schedule(raw.getSchedule())
                 .rating(raw.getRating())
                 .network(raw.getNetwork())
-                .webchannel_name(raw.getWebchannel_name())
+                .webChannel(raw.getWebChannel())
+                .externals(raw.getExternals())
                 .image(raw.getImage())
+                .links(raw.getLinks())
                 .summary(raw.getSummary())
+                .updated(raw.getUpdated())
+                .weight(raw.getWeight())
                 .comments(comments)
                 .build();
     }
@@ -78,6 +87,7 @@ public final class ShowMapper {
     public static ShowDetailDto toDetailDto(ShowCache cache, List<CommentDto> comments) {
     return ShowDetailDto.builder()
             .id(cache.getId())
+            .name(cache.getUrl())
             .name(cache.getName())
             .type(cache.getType())
             .language(cache.getLanguage())
@@ -91,9 +101,13 @@ public final class ShowMapper {
             .schedule(cache.getSchedule())
             .rating(cache.getRating())
             .network(cache.getNetwork())
-            .webchannel_name(cache.getWebChannel())
+            .webChannel(cache.getWebChannel())
+            .externals(cache.getExternals())
             .image(cache.getImage())
             .summary(cache.getSummary())
+            .updated(cache.getUpdated())
+            .weight(cache.getWeight())
+            .links(cache.getLinks())
             .comments(comments)
             .build();
     }

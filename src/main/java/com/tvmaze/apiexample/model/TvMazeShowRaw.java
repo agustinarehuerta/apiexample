@@ -3,6 +3,7 @@ package com.tvmaze.apiexample.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,9 +26,14 @@ public class TvMazeShowRaw {
     private String officialSite;
     private ScheduleDto schedule;
     private RatingDto rating;
-    private ChannelInfo network;
-    private ChannelInfo Webchannel_name;
+    private NetworkDto network;
+    private ChannelInfo webChannel;
+    private ExternalsDto externals;
     private ImageDto image;
+    private Long updated;
+    private String weight;
+    @JsonProperty("_links")
+    private LinksDto links;
     private String summary;
 
 
@@ -35,8 +41,8 @@ public class TvMazeShowRaw {
     if (network != null && network.getName() != null) {
         return network.getName();
     }
-    if (Webchannel_name != null && Webchannel_name.getName() != null) {
-        return Webchannel_name.getName();
+    if (webChannel != null && webChannel.getName() != null) {
+        return webChannel.getName();
     }
     return null;
 }

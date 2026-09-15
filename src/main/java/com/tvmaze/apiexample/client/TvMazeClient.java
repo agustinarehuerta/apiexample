@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
-import com.tvmaze.apiexample.entity.Show;
 import com.tvmaze.apiexample.model.TvMazeSearchItem;
 import com.tvmaze.apiexample.model.TvMazeShowRaw;
 
@@ -42,17 +41,6 @@ public class TvMazeClient {
                     .uri("/shows/{id}", id)
                     .retrieve()
                     .body(TvMazeShowRaw.class);
-        } catch (HttpClientErrorException.NotFound notFound) {
-            return null;
-        }
-    }
-
-        public Show getById2(Long id) {
-        try {
-            return restClient.get()
-                    .uri("/shows/{id}", id)
-                    .retrieve()
-                    .body(Show.class);
         } catch (HttpClientErrorException.NotFound notFound) {
             return null;
         }
