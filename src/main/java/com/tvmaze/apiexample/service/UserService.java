@@ -3,20 +3,25 @@ package com.tvmaze.apiexample.service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.tvmaze.apiexample.client.TvMazeClient;
 import com.tvmaze.apiexample.entity.CommentDocument;
-import com.tvmaze.apiexample.entity.Show;
+
+import com.tvmaze.apiexample.exception.ShowNotFoundException;
 import com.tvmaze.apiexample.mapper.ShowMapper;
 import com.tvmaze.apiexample.model.CommentDto;
 import com.tvmaze.apiexample.model.CommentRequestDto;
+import com.tvmaze.apiexample.model.ShowCache;
+import com.tvmaze.apiexample.model.ShowDetailDto;
 import com.tvmaze.apiexample.model.TvMazeSearchItem;
 import com.tvmaze.apiexample.model.TvMazeShowRaw;
 import com.tvmaze.apiexample.model.TvMazeShowResponse;
 import com.tvmaze.apiexample.repository.CommentRepository;
+import com.tvmaze.apiexample.repository.ShowCacheRepository;
 
 @Service 
 public class UserService {
@@ -24,11 +29,13 @@ public class UserService {
     private final TvMazeClient tvMazeClient;
     private final DbService dbService;
     private final CommentRepository commentRepository;
+    private final ShowCacheRepository showCacheRepository;
 
-     public UserService(DbService dbService,TvMazeClient tvMazeClient,CommentRepository commentRepository) {
+     public UserService(DbService dbService,TvMazeClient tvMazeClient,CommentRepository commentRepository,ShowCacheRepository showCacheRepository) {
         this.dbService = dbService;
         this.tvMazeClient = tvMazeClient;
         this.commentRepository = commentRepository;
+        this.showCacheRepository = showCacheRepository;
     }
 
     public List<TvMazeShowResponse> getShows(String query) {
@@ -55,15 +62,24 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public Show getShowById(Long show_id) {
+    public ShowDetailDto getShowById(Long show_id) {
 
-        Show response = dbService.getShowById(show_id.toString());
-        if (response == null) {
-           response = tvMazeClient.getById2(show_id.longValue());
-           dbService.createMovie(response);
+        List<CommentDto> comments = commentRepository.findByShowId(show_id).stream()
+        .map(ShowMapper::toCommentDto)
+        .collect(Collectors.toList());
+
+        Optional<ShowCache> cached = showCacheRepository.findById(show_id);
+        if (cached.isPresent()) {
+            return ShowMapper.toDetailDto(cached.get(), comments);
         }
 
-        return response;
+        TvMazeShowRaw raw = tvMazeClient.getShowById(show_id);
+        if (raw == null) {
+            throw new ShowNotFoundException("Show con id " + show_id + " no fue encontrado en TVMaze");
+        }
+
+        showCacheRepository.save(ShowMapper.toCache(raw));
+        return ShowMapper.toDetailDto(raw, comments);
     }
 
     public void createComment(Long showId, CommentRequestDto request){

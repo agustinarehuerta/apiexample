@@ -12,7 +12,7 @@ import java.util.List;
 public class TvMazeShowResponse{
     private Long id;
     private String name;
-    private String webchannel_name;
+    private String channel;
     private String summary;
     private List<String> genres;
     private List<CommentDto> comments;
