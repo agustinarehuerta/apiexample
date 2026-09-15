@@ -2,16 +2,24 @@ package com.tvmaze.apiexample.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Document(collection = "shows_cache")
 @Data
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class TvMazeShowRaw {
-   private Long id;
+@AllArgsConstructor
+@Builder
+public class ShowCache {
+
+    @Id
+    private Long id;
+
     private String url;
     private String name;
     private String type;
@@ -26,19 +34,8 @@ public class TvMazeShowRaw {
     private ScheduleDto schedule;
     private RatingDto rating;
     private ChannelInfo network;
-    private ChannelInfo Webchannel_name;
+    private ChannelInfo webChannel;
     private ImageDto image;
     private String summary;
-
-
-    public String resolveChannelName() {
-    if (network != null && network.getName() != null) {
-        return network.getName();
-    }
-    if (Webchannel_name != null && Webchannel_name.getName() != null) {
-        return Webchannel_name.getName();
-    }
-    return null;
-}
 }
 

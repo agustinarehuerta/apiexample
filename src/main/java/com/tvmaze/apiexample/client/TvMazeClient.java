@@ -36,7 +36,7 @@ public class TvMazeClient {
         return result != null ? Arrays.asList(result) : Collections.emptyList();
     }
 
-    public TvMazeShowRaw getById(Long id) {
+    public TvMazeShowRaw getShowById(Long id) {
         try {
             return restClient.get()
                     .uri("/shows/{id}", id)
