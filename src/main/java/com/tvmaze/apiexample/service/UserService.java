@@ -2,9 +2,12 @@ package com.tvmaze.apiexample.service;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.tvmaze.apiexample.client.TvMazeClient;
+import com.tvmaze.apiexample.entity.Comment;
 import com.tvmaze.apiexample.entity.Show;
 import com.tvmaze.apiexample.model.TvMazeSearchResponse;
 import com.tvmaze.apiexample.model.TvMazeShow;
@@ -37,6 +40,12 @@ public class UserService {
         }
 
         return response;
+    }
+
+    public Comment createComment(Comment comment){
+
+        return dbService.createComment(comment);
+
     }
 
 }

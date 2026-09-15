@@ -4,7 +4,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.tvmaze.apiexample.entity.Show;
 
-public interface ShowRepositry
+public interface ShowRepository
         extends MongoRepository<Show, String> {
 
 }   

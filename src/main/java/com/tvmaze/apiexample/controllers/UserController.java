@@ -3,12 +3,16 @@ package com.tvmaze.apiexample.controllers;
 import com.tvmaze.apiexample.service.DbService;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tvmaze.apiexample.entity.Comment;
 import com.tvmaze.apiexample.entity.Show;
 import com.tvmaze.apiexample.model.TvMazeShow;
 import com.tvmaze.apiexample.service.UserService;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,6 +53,14 @@ public class UserController {
         );  
         }
         return userService.getShowById(show_id);
+    }
+
+    @PostMapping("/saveComment")
+    public ResponseEntity createComment(@RequestBody Comment comment) {
+        
+        userService.createComment(comment);
+
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @PostMapping("/saveShow")
