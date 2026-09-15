@@ -3,15 +3,17 @@ package com.tvmaze.apiexample.controllers;
 import com.tvmaze.apiexample.service.DbService;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tvmaze.apiexample.entity.Comment;
 import com.tvmaze.apiexample.entity.Show;
-import com.tvmaze.apiexample.model.TvMazeShow;
+import com.tvmaze.apiexample.model.ApiStatusResponse;
+import com.tvmaze.apiexample.model.CommentRequestDto;
+import com.tvmaze.apiexample.model.TvMazeShowResponse;
 import com.tvmaze.apiexample.service.UserService;
+
+import jakarta.validation.Valid;
 
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,13 +38,13 @@ public class UserController {
 
 
     @GetMapping("/getShows")
-    public List<TvMazeShow> getShows(@RequestParam String search_query) {
+    public ResponseEntity<List<TvMazeShowResponse>> getShows(@RequestParam String search_query) {
         if (search_query == null || search_query.isBlank()) {
              throw new IllegalArgumentException(
                 "Query parameter cannot be empty"
         );  
         }
-        return userService.getShows(search_query);
+        return ResponseEntity.ok(userService.getShows(search_query));
     }
 
     @GetMapping("/getShowsById/{show_id}")
@@ -55,18 +57,17 @@ public class UserController {
         return userService.getShowById(show_id);
     }
 
-    @PostMapping("/saveComment")
-    public ResponseEntity createComment(@RequestBody Comment comment) {
+    @PostMapping("/{id}/saveComment")
+    public ResponseEntity<ApiStatusResponse> createComment(@PathVariable("id") Long showId,
+                                                          @Valid @RequestBody CommentRequestDto request) {
         
-        userService.createComment(comment);
-
-        return ResponseEntity.ok(HttpStatus.OK);
+        userService.createComment(showId, request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiStatusResponse("success", "Comentario guardado correctamente"));
     }
 
     @PostMapping("/saveShow")
     public Show createMovie(@RequestBody Show show) {
         return dbService.createMovie(show);
     }
-    
-    
 }
