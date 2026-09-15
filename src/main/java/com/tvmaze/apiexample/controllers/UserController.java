@@ -2,12 +2,14 @@ package com.tvmaze.apiexample.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tvmaze.apiexample.model.TvMazeByIDResponse;
 import com.tvmaze.apiexample.model.TvMazeShow;
 import com.tvmaze.apiexample.service.UserService;
 
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -25,7 +27,7 @@ public class UserController {
 
 
     @GetMapping("/getShows")
-    public List<TvMazeShow> getMethodName(@RequestParam String search_query) {
+    public List<TvMazeShow> getShows(@RequestParam String search_query) {
         if (search_query == null || search_query.isBlank()) {
              throw new IllegalArgumentException(
                 "Query parameter cannot be empty"
@@ -33,5 +35,16 @@ public class UserController {
         }
         return userService.getShows(search_query);
     }
+
+    @GetMapping("/getShowsById/{show_id}")
+    public List<TvMazeByIDResponse> getShowsById(@PathVariable Long show_id) {
+        if (show_id == null) {
+             throw new IllegalArgumentException(
+                "Query parameter cannot be empty"
+        );  
+        }
+        return userService.getShowById(show_id);
+    }
+    
     
 }
